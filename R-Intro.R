@@ -1255,9 +1255,9 @@ dat[1:3, legs]   # this returns an error - hopefully; but if for any
 # to solve this yourself."
 
 # get rows 1:10 of the first two columns of LPSdat
+dat[(1:10),(1:2)]
 
 
-#
 #
 #
 #
@@ -1285,6 +1285,8 @@ LPSdat[1:10, 1:2]
 
 # output rows 1:10 of the first two columns in reverse order
 
+?rev
+rev(dat[1:10,1:2]) #not quite, this flips the order of the columns, not the rows
 
 #
 #
@@ -1339,7 +1341,7 @@ LPSdat[10:1, 1:2]             # as before
 # rows 1:10 of the first two columns in random order
 #     hint: use sample()
 
-
+dat[sample(1:10), 1:2] #this randomizes the rows, otherwise, randomizes the columns as above
 #
 #
 #
@@ -1366,7 +1368,9 @@ LPSdat[sample(1:10), 1:2]
 # the value in the second column, ascending
 #     hint: use order()
 
+dat[1:10, 1:2]
 
+?order
 #
 #
 #
@@ -1386,10 +1390,11 @@ LPSdat[sample(1:10), 1:2]
 #
 #
 #
-LPSdat[1:10,2]
-order(LPSdat[1:10,2])
-LPSdat[order(LPSdat[1:10,2]), 1:2]
+dat[1:10,2]
+order(dat[1:10,2])
+dat[order(dat[1:10,2]), 1:2] #follow up on this to understand it
 
+colnames(dat)
 # rows 1:10 of the column named Mo.LPS
 
 
