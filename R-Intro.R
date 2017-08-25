@@ -106,7 +106,7 @@ x <- pi
 x
 
 # Question: how many significant digits does R process?
-# How do you print them all?
+# How do you print them all? https://stackoverflow.com/questions/2287616/controlling-number-of-decimal-digits-in-print-output-in-r
 
 # TASK: find out how to control the number of digits
 #       printed in a print() expression.
@@ -156,10 +156,10 @@ typeInfo <- function(x) {
 #    1. Place the function typeInfo() into a file named "typeInfo.R" based on
 #    the file "functionTemplate.R".
 #    2. Annotate and comment as required.
-#    3. Configure your project to load typeInfo.R upon startup (how?).
+#    3. Configure your project to load typeInfo.R upon startup (how?). .Rprofile for local access
 #    4. Exit R Studio, and start it again.
 #
-#    How do you know the function is now available?
+#    How do you know the function is now available? It's listed in the environment panel
 
 
 
@@ -266,7 +266,22 @@ genes <- c("Spic", "Cebpb", "Lyz2", "Sfpi1", "Nfkbiz")
 
 #       -> See sampleSolution-readText.R if needed.
 
+# May use a read command, may copy and paste, but must turn them all into strings
+# Selecting a set of characters and then pressing " will put the whole set of characters into quotes
+# c() will concatenate multiple strings into a single vector/set of strings
+# If you put " at the first and last position in the column, it will make a string with all gene names separated by a line break '\'
+# Can then use strsplit(genes, "\n") to split the string at the line breaks
+# However, this stores the individual gene names as a list, not as a vector
+# Very often the output of functions are lists, and don't always want them.
+# So the command unlist(strsplit(genes, "\n")) will flatten the list into a single vector
+# Hackish, but may be faster than looking up read function formatting etc
+# The 'right' way is in sampleSolution-readText.R
 
+CharGenes <- read.csv('Fig_3-CharacteristicGenes.txt',
+    header = FALSE,
+    stringsAsFactors = FALSE)
+
+typeInfo(CharGenes)
 
 # ==== CHECKPOINT =========================
 # Place a green PostIt on the lid of your
@@ -283,7 +298,111 @@ genes <- c("Spic", "Cebpb", "Lyz2", "Sfpi1", "Nfkbiz")
 #       "arabidopsis thaliana". The result should be
 #       "ARATH". Then make this into a function.
 
+
+# Start with a simple string to play with
+
+s <- "Homo sapiens"
+
+#Then figure out how to separate it into elements
+
+strsplit(s, " ") #Remember needs an argument for what to split the string on
+
+#But this apparently doesn't store it anywhere, so store it
+
+s2 <- strsplit(s, " ")
+
+s2
+
+#This stores the new patterns as a list, which behaves oddly with substr(), so unlist to change to a vector
+s2 <- unlist(strsplit(s, " "))
+
+s2
+
+#To extract characters, can use substr()
+?substr
+
+s3 <- substr(s2, start = 1, stop = 2)
+
+s3
+
+#This worked as expected, although not sure how to do different lengths on the 2 different elements of the vector
+
 #       -> See sample solution if needed.
+
+# Learn to structure a problem into individual steps and implement them in a code
+# Write a function with the intended function of an input of a character and an output of a new character string
+# Spend some time to give your functions and variables a name you can immediately recognize, rather than a single letter variable, etc as a memory jog
+# Code is read much more often than it is written
+
+ShortName <- function(){
+
+
+}
+
+# That function takes some variable input, a parameter. This parameter can be short, eg "s"
+
+ShortName <- function(s){
+    nFirst <- 3 #Use this number of letters from the first element
+    nSecond <- 2 #Use this number of letters from the second element
+}
+
+# Plan for function
+    # Convert to uppercase
+    s <- toupper(s)
+
+    # Split the input into words
+    # strsplit(s, " ") #split the string 's' on the blank character, outputs a list, less than desirable, so instead:
+    t <- unlist(strsplit(s, " ")) #outputs a vector t with 2 elements
+
+    # Now, can access the indivdual elements of the vector with []
+
+     # extract the first nFirst characters from the first word
+    # extract the first nSecond characters from the second word
+        # Define what nFirst and nSecond are, done above
+        #How do you extract these characters?
+        ?strtrim
+    # strtrim(t, 3)
+         # t contains 2 elements, strtrim takes the first 3 characters of each string
+    #strtrim(t[1], nFirst) #works, [] will apply the command to the first word, and then use the defined variable
+    # canonical way to do this is with substring, with the caveat that double width character, often Chinese, Japanese, etc, can confuse substr, and strtrim is a better choice in this case
+    substr(t[1], 1, nFirst)
+    substr(t[2], 1, nSecond)
+
+    # paste these together (why not concatenate?)
+    # paste() or paste0(), difference is that paste will separate with a ' ' while paste0 collapses the blank character
+    # paste can be very useful if you have a list and want to make a csv, paste the list together and define a ',' as the intervening space paste(x, first, last, sep=',')
+    # similar and versatile function is sprintf(), inherited from the C language
+        # Has it's own internal syntax, useful for defining sig figs, or printing out comments on output, etc
+    u <- paste(substr(t[1], 1, nFirst), substr(t[2], 1, nSecond), sep=0)
+
+    # Return the result
+    return(u) #returning values from functions is not required. If there's no return statement, the function will return the last calculated value, but return will make the code explicit, and make for more readable code
+
+
+
+
+biCodes <- function(s) {
+    # Purpose:
+    #     Produce a binomial name from a string that contains at least
+    #     two words.
+    # Version:  1.0
+    #
+    # Parameters:
+    #     s: a single string
+    # Value:
+    #     v: an upper-case binomial code derived from
+    #        the nFirst and nSecond letters in the first two
+    #        words of the input string
+
+    nFirst  <- 3
+    nSecond <- 2
+    y <- strsplit(toupper(s), " ")
+    v <- paste(substr(y[[1]][1], 1, nFirst), #In this solution [[1]] accesses the list element, which is a vector, and then [1] or [2] accesses the first or second element of that vector, used in place of unlist()
+               substr(y[[1]][2], 1, nSecond),
+               collapse='', sep='')
+    return(v)
+}
+
 
 
 # ==== CHECKPOINT =========================
@@ -334,7 +453,7 @@ unlist(pUC19)   # Explain ....
 # A data frame is a matrix or a "set" of data. It is
 # a list of vectors and/or factors of the same length,
 # that are related "across", such that data in the
-# same position come from the same experimental unit
+# same position in the rows come from the same experimental unit
 # (subject, animal, etc).
 
 # Since it is basically a list, the columns can have different type!
@@ -344,20 +463,24 @@ unlist(pUC19)   # Explain ....
 
 myDF <- data.frame(genes = c("Abc1", "Qrz", "Fubr31"),
                    expr = c(168059, 23490578, 34),
-                   induced = c(TRUE, FALSE, FALSE))
+                   induced = c(TRUE, FALSE, FALSE))#specifying the column names 'genes =, etc' as well as the colum contents
 myDF[-2,]
 typeInfo(myDF)
 
 # (We'll discuss factors below ...)
-
+# In this case, did not intend to have the gene names as factors
+# In general, don't want factors when you mean strings
+# Therefore, add stringsAsFactors=FALSE whenever you create a data.frame
+# Can turn it off globally, but runs the risk that some package will actually be using factors and break the package unpredictably
 
 myDF <- data.frame(genes = c("Abc1", "Qrz", "Fubr31"),
                    expr = c(168059, 23490578, 34),
                    induced = c(TRUE, FALSE, FALSE),
                    stringsAsFactors = FALSE)
 typeInfo(myDF)
+# typeInfo is useful to explicitly check your data and make sure you're getting what you're expecting
 
-
+# In R, NA (not N/A), is a specific designate for missing data
 
 # Why do we need data frames if they do the much
 # the same as a list?
@@ -424,9 +547,67 @@ typeInfo(myDF)
 # 4 - Use head() to look at the beginning of the object.
 # 5 - Remove any unneeded header rows.
 # 6 - Give the columns names that reflect the cell type (cf.
-#     Figure 2c), and the stimulus status.
+#     Figure 2c), and the stimulus status. Rather than type I, II, II... change to B cell, Macs, NK (meaningful column names)
 # 7 - Use typeInfo() to analyse the object you have created.
 
+rawDat <- read.csv("table_S3.csv",
+                   header = TRUE,
+                   stringsAsFactors = FALSE,
+                   skip = 4,
+                   row.names = 1)
+colnames(rawDat) <- c('B cells', 'B cells', 'Macrophages', 'Macrophages', 'NK', 'NK', 'Monocyte', 'Monocyte', 'pDC', 'pDC', 'DC1', 'DC1', 'DC2', 'DC2', 'cluster')
+as.numeric(as.character((rawDat$`B cells`)))
+rawDat
+?read.csv
+
+typeInfo(rawDat)
+
+# SAMPLE SOLUTION
+rawDat <- read.csv('table_S3.csv',
+                   header = FALSE,
+                   stringsAsFactors = FALSE)
+
+#Convenient way to look at the data is to click the spreadsheet icon to the right of the variable name in the environment
+#Can alse use head() by default gives first 6 lines
+head(rawDat)
+
+#Problems: since skipped header, none of the data is used as a header, but R subs V1, V2, etc for that
+    #Rows 1-6 don't contain data, but instead headings, etc. Must remove 1-6 if you want the data treated as numerical.
+    #If there is ANY non-numerical data in a column, it can never be numerical
+    #Also, because of the way it was read in, all of the columns are character columns, and must be converted to numerical columns
+
+LPSdat <- rawDat[-(1:6),] # removes first 6 rows of data. Can access indices with [], and in data frames the structure is [rows, columns]
+
+colnames(LPSdat) <- c("genes", #gene names
+                      "B.ctrl", #Cell types are taken from
+                      "B.LPS",  #Fig 4 of Jaitin, et al
+                      "M0.ctrl",  #.ctrl and .LPS refer to control
+                      "M0.LPS",   #and 2h LPS challenge respectively
+                      "NK.ctrl",  #The cell types are
+                      "NK.LPS",   #B: B cells
+                      "MN.ctrl",  #M0: Macrophage
+                      "MN.LPS",   # NK cells
+                      "pDC.ctrl", #MN: Monocytes
+                      "pDC.LPS",  #pDC: plasmacytoid dendritic cells
+                      "DC1.ctrl", #DC1: dendritic cell type 1
+                      "DC1.LPS",  #DC2: dendritic cell type 2
+                      "DC2.ctrl", #Cluster: author assigned cluster
+                      "DC2.LPS",
+                      "cluster")
+head(LPSdat) #confirms naming worked
+
+#Row names are numbered by what they were previously, which is why the current row name starts at 7 (dropped first 6 rows)
+    #Plan is to just rename the rows starting at 1
+    #nrow() lists the number of rows
+rownames(LPSdat) <- 1:nrow(LPSdat)
+
+head(LPSdat)
+
+tail(LPSdat) #confirm numbering was correct at both start (head) and end (tail)
+
+typeInfo(LPSdat)
+
+#Should have changed the data type to numerical instead of character, but didn't. Look into why not.
 
 # ==== CHECKPOINT  ... =====================
 
@@ -595,6 +776,13 @@ c(B220synonyms, "CD19") %in% toupper(LPSdat$genes)
 #       then find the enrichment vectors for the subset
 #       Bst2, Siglech, Ly6d, Irf8
 
+
+s <- read.csv(Fig_3-CharacteristicGenes.txt)
+CharGenes <- unlist(strsplit(s, "\n"))
+
+charGenes %in% toupper(LPSdat$genes)
+
+c(CharGenes, "CD19") %in% toupper(LPSdat$genes)
 #       What do you find?
 
 # ==== CHECKPOINT  ... =====================
@@ -856,6 +1044,7 @@ dict <- c("fish", "bird", "beast", "bug", "spider", "crab", "centipede")
 names(dict) <- c(2 * (0:5), 100)
 #... to populate the >>type<< column:
 dat$type <- dict[as.character(dat$legs)]
+?names()
 
 # If you already understand the expression above, you're doing pretty well with
 # the topic of this tutorial. If you don't, don't worry - by the end of the
@@ -865,6 +1054,7 @@ dat$type <- dict[as.character(dat$legs)]
 
 head(dat)
 str(dat)
+?str()
 
 # Note that we have given names to some columns, but R made names for the five
 # columns of random values that were created as a matrix. Let us look at the
@@ -894,8 +1084,8 @@ dat[c(2, 3), c(1, 2, 3)]
 
 dat[1:4, 1:3]
 dat[4:1, 1:3]   # same in reverse order
-dat[seq(2, N, by=2), ]   # even rows
-
+dat[seq(0, N, by=2), ]   # even rows - seq(from, to, by step)
+?seq()
 # But we can do more interesting things, since the indices don't have to be
 # unique, or in any order:
 
@@ -905,6 +1095,7 @@ dat[c(1, 1, 1, 2, 2, 3), 1:3]
 dat[sample(1:N, 3), 1:3]
 dat[sample(1:N, 3), 1:3]
 dat[sample(1:N, 3), 1:3]
+?sample()
 
 # ... or sort the dataframe. Sorting requires the order() function, not sort().
 
