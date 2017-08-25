@@ -1177,7 +1177,7 @@ dat[apply(dat[ , 4:8], 1, function(x){all(x < 0.5)}), ]
 
 # The function grep(), and the %in% operator can be used to subset via string
 # matching:
-
+?grep
 grep("r", dat[ , 3])          # types that contain "r"
 dat[grep("r", dat[ , 3]), 1:3]
 
